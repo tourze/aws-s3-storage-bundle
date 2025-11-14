@@ -108,8 +108,12 @@ readonly class FilesystemFactoryDecorator implements FilesystemFactoryInterface
             $urlGenerator = new PublicUrlGenerator($s3Endpoint, $bucket, $this->logger, $prefix, true);
         }
 
-        return new Filesystem($adapter, [
-            'visibility' => $visibility,
-        ], publicUrlGenerator: $urlGenerator);
+        return new Filesystem(
+            adapter: $adapter,
+            config: [
+                'visibility' => $visibility,
+            ],
+            publicUrlGenerator: $urlGenerator
+        );
     }
 }
