@@ -8,7 +8,7 @@ on:
 
 jobs:
   phpunit:
-    name: PHP-${{ matrix.php_version }}-${{ matrix.prefer }}
+    name: PHP-${{ matrix.php_version }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -17,8 +17,6 @@ jobs:
           - 8.2
           - 8.3
           - 8.4
-        prefer:
-          - stable
 
     steps:
       - uses: actions/checkout@v4
@@ -40,7 +38,7 @@ jobs:
             ${{ runner.os }}-php-${{ matrix.php_version }}-
 
       - name: Install Dependencies
-        run: composer install --prefer-dist --no-interaction --no-suggest --prefer-${{ matrix.prefer }}
+        run: composer install --prefer-dist --no-interaction
 
       - name: Run PHPUnit
         run: ./vendor/bin/phpunit tests
