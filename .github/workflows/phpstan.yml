@@ -11,11 +11,16 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          coverage: none
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
@@ -33,4 +38,4 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Run PHPStan
-        run: ./vendor/bin/phpstan analyse src -l 1
+        run: ./vendor/bin/phpstan analyse src -l 1 --memory-limit=1G

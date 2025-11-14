@@ -1,5 +1,10 @@
 name: PHPUnit Test
-on: [push, pull_request]
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   phpunit:
@@ -14,15 +19,28 @@ jobs:
           - 8.4
         prefer:
           - stable
+
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php_version }}
           ini-values: zend.assertions=1, assert.exception=1
           coverage: none
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ matrix.php_version }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php_version }}-
+
       - name: Install Dependencies
-        run: composer update --prefer-dist --no-interaction --no-suggest --prefer-${{ matrix.prefer }}
+        run: composer install --prefer-dist --no-interaction --no-suggest --prefer-${{ matrix.prefer }}
+
       - name: Run PHPUnit
         run: ./vendor/bin/phpunit tests
