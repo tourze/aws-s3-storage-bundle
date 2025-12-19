@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Tourze\BundleDependency\BundleDependencyInterface;
 use Tourze\FileStorageBundle\FileStorageBundle;
 
-class AwsS3StorageBundle extends Bundle implements BundleDependencyInterface
+final class AwsS3StorageBundle extends Bundle implements BundleDependencyInterface
 {
     public static function getBundleDependencies(): array
     {

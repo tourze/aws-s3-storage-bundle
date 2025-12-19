@@ -40,7 +40,7 @@ use Tourze\AwsS3StorageBundle\Helper\S3OperationHelper;
  * - 不支持通过ACL修改文件可见性（visibility）
  * - 使用PathPrefixer来处理路径前缀
  */
-class AwsS3Adapter implements FilesystemAdapter
+final class AwsS3Adapter implements FilesystemAdapter
 {
     private const MAX_KEYS_FOR_DIRECTORY_CHECK = 1;
 

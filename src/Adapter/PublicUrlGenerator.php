@@ -19,7 +19,7 @@ use Tourze\AwsS3StorageBundle\Exception\S3Exception;
  * 2. CloudFront/自定义域名格式：https://{domain}/{path}
  */
 #[WithMonologChannel(channel: 'aws_s3_storage')]
-class PublicUrlGenerator implements FlysystemPublicUrlGenerator
+final class PublicUrlGenerator implements FlysystemPublicUrlGenerator
 {
     private string $baseUrl;
 

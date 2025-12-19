@@ -24,7 +24,7 @@ use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
  */
 #[CoversClass(FilesystemFactoryDecorator::class)]
 #[RunTestsInSeparateProcesses]
-class FilesystemFactoryDecoratorIntegrationTest extends AbstractIntegrationTestCase
+final class FilesystemFactoryDecoratorIntegrationTest extends AbstractIntegrationTestCase
 {
     protected function onSetUp(): void
     {
@@ -61,13 +61,14 @@ class FilesystemFactoryDecoratorIntegrationTest extends AbstractIntegrationTestC
 
     public function testCreateFilesystemWithS3ConfigShouldCreateS3Filesystem(): void
     {
-        // Arrange - 设置 S3 配置
+        // Arrange - 设置 S3 配置，需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $originalEnv = $_ENV;
         $_ENV['AWS_S3_BUCKET'] = 'test-bucket';
         $_ENV['AWS_S3_REGION'] = 'us-east-1';
         $_ENV['AWS_S3_PREFIX'] = 'uploads';
         $_ENV['AWS_S3_ACCESS_KEY_ID'] = 'test-access-key';
         $_ENV['AWS_S3_SECRET_ACCESS_KEY'] = 'test-secret-key';
+        $_ENV['AWS_S3_ENDPOINT'] = 's3.us-east-1.amazonaws.com';
 
         try {
             // Act

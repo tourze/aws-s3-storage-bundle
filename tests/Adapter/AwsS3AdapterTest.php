@@ -29,7 +29,7 @@ use Tourze\AwsS3StorageBundle\Exception\S3Exception;
  * @internal
  */
 #[CoversClass(AwsS3Adapter::class)]
-class AwsS3AdapterTest extends TestCase
+final class AwsS3AdapterTest extends TestCase
 {
     private S3ClientInterface&MockObject $client;
 

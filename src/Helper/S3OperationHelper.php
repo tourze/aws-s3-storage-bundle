@@ -13,7 +13,7 @@ use Tourze\AwsS3StorageBundle\Client\S3ClientInterface;
 /**
  * S3操作帮助类，处理S3相关的复杂逻辑
  */
-class S3OperationHelper
+final class S3OperationHelper
 {
     public function __construct(
         private readonly S3ClientInterface $client,

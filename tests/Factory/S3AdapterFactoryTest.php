@@ -14,7 +14,7 @@ use Tourze\AwsS3StorageBundle\Factory\S3AdapterFactory;
  * @internal
  */
 #[CoversClass(S3AdapterFactory::class)]
-class S3AdapterFactoryTest extends TestCase
+final class S3AdapterFactoryTest extends TestCase
 {
     private S3AdapterFactory $factory;
 

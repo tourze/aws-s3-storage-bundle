@@ -12,7 +12,7 @@ use Tourze\PHPUnitBase\AbstractExceptionTestCase;
  * @internal
  */
 #[CoversClass(ConfigurationException::class)]
-class ConfigurationExceptionTest extends AbstractExceptionTestCase
+final class ConfigurationExceptionTest extends AbstractExceptionTestCase
 {
     public function testExceptionInheritsFromInvalidArgumentException(): void
     {

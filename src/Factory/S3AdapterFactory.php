@@ -12,7 +12,7 @@ use Tourze\AwsS3StorageBundle\Client\S3Client;
 /**
  * AWS S3适配器工厂类
  */
-readonly class S3AdapterFactory
+final readonly class S3AdapterFactory
 {
     /**
      * 创建S3适配器

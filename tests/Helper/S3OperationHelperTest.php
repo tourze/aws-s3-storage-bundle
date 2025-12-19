@@ -19,7 +19,7 @@ use Tourze\AwsS3StorageBundle\Helper\S3OperationHelper;
  * @internal
  */
 #[CoversClass(S3OperationHelper::class)]
-class S3OperationHelperTest extends TestCase
+final class S3OperationHelperTest extends TestCase
 {
     private S3ClientInterface&MockObject $client;
 

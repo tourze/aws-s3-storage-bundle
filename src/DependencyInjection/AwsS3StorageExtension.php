@@ -6,7 +6,7 @@ namespace Tourze\AwsS3StorageBundle\DependencyInjection;
 
 use Tourze\SymfonyDependencyServiceLoader\AutoExtension;
 
-class AwsS3StorageExtension extends AutoExtension
+final class AwsS3StorageExtension extends AutoExtension
 {
     protected function getConfigDir(): string
     {

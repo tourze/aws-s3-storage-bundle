@@ -7,6 +7,6 @@ namespace Tourze\AwsS3StorageBundle\Exception;
 /**
  * 配置异常
  */
-class ConfigurationException extends \InvalidArgumentException
+final class ConfigurationException extends \InvalidArgumentException
 {
 }

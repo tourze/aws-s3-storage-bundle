@@ -23,7 +23,7 @@ use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
  */
 #[CoversClass(PublicUrlGenerator::class)]
 #[RunTestsInSeparateProcesses]
-class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
+final class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
 {
     protected function onSetUp(): void
     {
@@ -79,10 +79,11 @@ class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
 
     public function testConstructorWithS3FormatShouldCreateValidBaseUrl(): void
     {
-        // Arrange & Act
+        // Arrange & Act - 需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $generator = $this->createGeneratorThroughFactory(
             bucket: 'my-bucket',
-            region: 'us-east-1'
+            region: 'us-east-1',
+            endpoint: 's3.us-east-1.amazonaws.com'
         );
 
         // Assert
@@ -121,9 +122,10 @@ class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
 
     public function testPublicUrlWithEmptyPrefixShouldGenerateSimplePath(): void
     {
-        // Arrange
+        // Arrange - 需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $generator = $this->createGeneratorThroughFactory(
-            bucket: 'my-bucket'
+            bucket: 'my-bucket',
+            endpoint: 's3.us-east-1.amazonaws.com'
         );
         $path = 'documents/file.pdf';
         $config = new Config();
@@ -137,10 +139,11 @@ class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
 
     public function testPublicUrlWithPrefixShouldCombineWithPath(): void
     {
-        // Arrange
+        // Arrange - 需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $generator = $this->createGeneratorThroughFactory(
             bucket: 'my-bucket',
-            prefix: 'uploads'
+            prefix: 'uploads',
+            endpoint: 's3.us-east-1.amazonaws.com'
         );
         $path = 'documents/file.pdf';
         $config = new Config();
@@ -154,9 +157,10 @@ class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
 
     public function testPublicUrlWithSpecialCharactersShouldUrlEncode(): void
     {
-        // Arrange
+        // Arrange - 需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $generator = $this->createGeneratorThroughFactory(
-            bucket: 'my-bucket'
+            bucket: 'my-bucket',
+            endpoint: 's3.us-east-1.amazonaws.com'
         );
         $path = 'folder with spaces/file name with spaces.txt';
         $config = new Config();
@@ -170,9 +174,10 @@ class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
 
     public function testPublicUrlWithUnicodeCharactersShouldUrlEncode(): void
     {
-        // Arrange
+        // Arrange - 需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $generator = $this->createGeneratorThroughFactory(
-            bucket: 'my-bucket'
+            bucket: 'my-bucket',
+            endpoint: 's3.us-east-1.amazonaws.com'
         );
         $path = '中文/文件名.txt';
         $config = new Config();
@@ -186,9 +191,10 @@ class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
 
     public function testPublicUrlWithSlashesShouldPreserveSlashes(): void
     {
-        // Arrange
+        // Arrange - 需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $generator = $this->createGeneratorThroughFactory(
-            bucket: 'my-bucket'
+            bucket: 'my-bucket',
+            endpoint: 's3.us-east-1.amazonaws.com'
         );
         $path = 'level1/level2/level3/file.txt';
         $config = new Config();
@@ -220,9 +226,10 @@ class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
 
     public function testPublicUrlWithRootPathShouldHandleCorrectly(): void
     {
-        // Arrange
+        // Arrange - 需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $generator = $this->createGeneratorThroughFactory(
-            bucket: 'my-bucket'
+            bucket: 'my-bucket',
+            endpoint: 's3.us-east-1.amazonaws.com'
         );
         $path = '/';
         $config = new Config();
@@ -235,9 +242,10 @@ class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
 
     public function testPublicUrlWithDotInPathShouldHandleCorrectly(): void
     {
-        // Arrange
+        // Arrange - 需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $generator = $this->createGeneratorThroughFactory(
-            bucket: 'my-bucket'
+            bucket: 'my-bucket',
+            endpoint: 's3.us-east-1.amazonaws.com'
         );
         $path = 'folder/.hidden/file.txt';
         $config = new Config();
@@ -251,10 +259,11 @@ class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
 
     public function testPublicUrlWithTrailingSlashInPrefixShouldNormalize(): void
     {
-        // Arrange
+        // Arrange - 需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $generator = $this->createGeneratorThroughFactory(
             bucket: 'my-bucket',
-            prefix: 'uploads/'
+            prefix: 'uploads/',
+            endpoint: 's3.us-east-1.amazonaws.com'
         );
         $path = 'file.txt';
         $config = new Config();
@@ -274,9 +283,10 @@ class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
     #[TestWith(['file%name.txt', 'file%25name.txt'], 'percent character')]
     public function testPublicUrlShouldCorrectlyEncodeVariousCharacters(string $input, string $expectedPath): void
     {
-        // Arrange
+        // Arrange - 需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $generator = $this->createGeneratorThroughFactory(
-            bucket: 'my-bucket'
+            bucket: 'my-bucket',
+            endpoint: 's3.us-east-1.amazonaws.com'
         );
         $config = new Config();
 
@@ -289,9 +299,10 @@ class PublicUrlGeneratorTest extends AbstractIntegrationTestCase
 
     public function testPublicUrlIgnoresConfigParameters(): void
     {
-        // Arrange
+        // Arrange - 需要设置 endpoint 以获取 PublicUrlGenerator 实例
         $generator = $this->createGeneratorThroughFactory(
-            bucket: 'my-bucket'
+            bucket: 'my-bucket',
+            endpoint: 's3.us-east-1.amazonaws.com'
         );
         $path = 'test.txt';
         $config = new Config([

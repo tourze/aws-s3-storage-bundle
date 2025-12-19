@@ -22,7 +22,7 @@ use Tourze\AwsS3StorageBundle\Exception\S3Exception;
  *
  * 基于 async-aws/s3 的 S3 客户端实现
  */
-readonly class S3Client implements S3ClientInterface
+final readonly class S3Client implements S3ClientInterface
 {
     public function __construct(
         private AsyncS3Client $client,

@@ -15,7 +15,7 @@ use Tourze\PHPUnitSymfonyUnitTest\AbstractDependencyInjectionExtensionTestCase;
  * @internal
  */
 #[CoversClass(AwsS3StorageExtension::class)]
-class AwsS3StorageExtensionTest extends AbstractDependencyInjectionExtensionTestCase
+final class AwsS3StorageExtensionTest extends AbstractDependencyInjectionExtensionTestCase
 {
     private AwsS3StorageExtension $extension;
 

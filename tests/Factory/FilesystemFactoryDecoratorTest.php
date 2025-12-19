@@ -16,7 +16,7 @@ use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
  */
 #[CoversClass(FilesystemFactoryDecorator::class)]
 #[RunTestsInSeparateProcesses]
-class FilesystemFactoryDecoratorTest extends AbstractIntegrationTestCase
+final class FilesystemFactoryDecoratorTest extends AbstractIntegrationTestCase
 {
     private FilesystemFactoryDecorator $decorator;
 
@@ -107,10 +107,7 @@ class FilesystemFactoryDecoratorTest extends AbstractIntegrationTestCase
         $this->assertInstanceOf(FilesystemOperator::class, $result);
     }
 
-    /**
-     * @param array<string, string> $envConfig
-     * @phpstan-ignore-next-line missingType.iterableValue
-     */
+    
     #[TestWith([
         [
             'AWS_S3_BUCKET' => 'test-bucket',
@@ -161,10 +158,7 @@ class FilesystemFactoryDecoratorTest extends AbstractIntegrationTestCase
         $this->assertInstanceOf(FilesystemOperator::class, $result);
     }
 
-    /**
-     * @param array<string, string|null> $envConfig
-     * @phpstan-ignore-next-line missingType.iterableValue
-     */
+    
     #[TestWith([
         [
             'AWS_S3_BUCKET' => null,

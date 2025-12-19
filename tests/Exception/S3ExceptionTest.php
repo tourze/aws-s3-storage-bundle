@@ -12,7 +12,7 @@ use Tourze\PHPUnitBase\AbstractExceptionTestCase;
  * @internal
  */
 #[CoversClass(S3Exception::class)]
-class S3ExceptionTest extends AbstractExceptionTestCase
+final class S3ExceptionTest extends AbstractExceptionTestCase
 {
     public function testExceptionInheritsFromRuntimeException(): void
     {

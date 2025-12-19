@@ -12,9 +12,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 use Tourze\AwsS3StorageBundle\Adapter\PublicUrlGenerator;
-use Tourze\AwsS3StorageBundle\Factory\S3AdapterFactory;
-use Tourze\FileStorageBundle\Factory\FilesystemFactory;
-use Tourze\FileStorageBundle\Factory\FilesystemFactoryInterface;
+use Tourze\FlysystemBundle\Factory\FilesystemFactory;
+use Tourze\FlysystemBundle\Factory\FilesystemFactoryInterface;
+use Tourze\FlysystemBundle\UrlGenerator\ControllerPublicUrlGenerator;
 
 /**
  * FilesystemFactory 装饰器，用于支持 AWS S3
@@ -24,9 +24,10 @@ use Tourze\FileStorageBundle\Factory\FilesystemFactoryInterface;
  */
 #[AsDecorator(decorates: FilesystemFactory::class)]
 #[WithMonologChannel(channel: 'aws_s3_storage')]
-readonly class FilesystemFactoryDecorator implements FilesystemFactoryInterface
+final readonly class FilesystemFactoryDecorator implements FilesystemFactoryInterface
 {
     public function __construct(
+        private ControllerPublicUrlGenerator $publicUrlGenerator,
         #[AutowireDecorated] private FilesystemFactoryInterface $innerFactory,
         private LoggerInterface $logger,
     ) {
@@ -74,6 +75,7 @@ readonly class FilesystemFactoryDecorator implements FilesystemFactoryInterface
         $accessKeyId = is_string($_ENV['AWS_S3_ACCESS_KEY_ID'] ?? null) ? $_ENV['AWS_S3_ACCESS_KEY_ID'] : null;
         $secretAccessKey = is_string($_ENV['AWS_S3_SECRET_ACCESS_KEY'] ?? null) ? $_ENV['AWS_S3_SECRET_ACCESS_KEY'] : null;
         $endpoint = is_string($_ENV['AWS_S3_ENDPOINT'] ?? null) ? $_ENV['AWS_S3_ENDPOINT'] : null;
+        $cdnUrl = is_string($_ENV['AWS_S3_CDN_URL'] ?? null) ? $_ENV['AWS_S3_CDN_URL'] : null;
 
         $factory = new S3AdapterFactory();
 
@@ -90,30 +92,41 @@ readonly class FilesystemFactoryDecorator implements FilesystemFactoryInterface
         // 设置可见性转换器
         $visibility = new PortableVisibilityConverter();
 
-        // 检查是否配置了 CDN URL
-        $cdnUrl = is_string($_ENV['AWS_S3_CDN_URL'] ?? null) ? $_ENV['AWS_S3_CDN_URL'] : null;
-        $urlGenerator = null;
-        if (null !== $cdnUrl) {
-            $this->logger->debug('Using CDN URL for public access', ['cdn_url' => $cdnUrl]);
-            // 使用配置的 CDN 地址，不使用 S3 格式
-            $urlGenerator = new PublicUrlGenerator($cdnUrl, $bucket, $this->logger, $prefix, false);
-        } elseif (null !== $endpoint) {
-            $this->logger->debug('Using S3 endpoint for public access', ['endpoint' => $endpoint]);
-            // 如果没有配置 CDN 但配置了 endpoint，使用 S3 格式
-            $urlGenerator = new PublicUrlGenerator($endpoint, $bucket, $this->logger, $prefix, true);
-        } else {
-            $this->logger->debug('Using default S3 URL format', ['region' => $region]);
-            // 默认使用标准 S3 URL 格式
-            $s3Endpoint = sprintf('s3.%s.amazonaws.com', $region);
-            $urlGenerator = new PublicUrlGenerator($s3Endpoint, $bucket, $this->logger, $prefix, true);
-        }
-
         return new Filesystem(
             adapter: $adapter,
             config: [
                 'visibility' => $visibility,
             ],
-            publicUrlGenerator: $urlGenerator
+            publicUrlGenerator: $this->createUrlGenerator($cdnUrl, $endpoint, $bucket, $prefix)
         );
+    }
+
+    /**
+     * 创建 URL 生成器
+     *
+     * 根据配置选择合适的 URL 生成器实现
+     */
+    private function createUrlGenerator(
+        ?string $cdnUrl,
+        ?string $endpoint,
+        string $bucket,
+        string $prefix,
+    ): ControllerPublicUrlGenerator|PublicUrlGenerator {
+        if (null !== $cdnUrl) {
+            $this->logger->debug('Using CDN URL for public access', ['cdn_url' => $cdnUrl]);
+
+            // 使用配置的 CDN 地址，不使用 S3 格式
+            return new PublicUrlGenerator($cdnUrl, $bucket, $this->logger, $prefix, false);
+        }
+
+        if (null !== $endpoint) {
+            $this->logger->debug('Using S3 endpoint for public access', ['endpoint' => $endpoint]);
+
+            // 如果没有配置 CDN 但配置了 endpoint，使用 S3 格式
+            return new PublicUrlGenerator($endpoint, $bucket, $this->logger, $prefix, true);
+        }
+
+        // 默认情况使用注入的公共 URL 生成器
+        return $this->publicUrlGenerator;
     }
 }

@@ -21,13 +21,9 @@ use AsyncAws\S3\ValueObject\DeletedObject;
 use AsyncAws\S3\ValueObject\Error;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-// @phpstan-ignore-next-line
 use Psr\Log\LoggerInterface;
-// @phpstan-ignore-next-line
 use Symfony\Contracts\HttpClient\ChunkInterface;
-// @phpstan-ignore-next-line
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-// @phpstan-ignore-next-line
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 use Tourze\AwsS3StorageBundle\Client\S3Client;
@@ -73,7 +69,6 @@ function createMockResponse(): Response
     };
 
     $httpClient = new class implements HttpClientInterface {
-        // @phpstan-ignore-next-line
         public function request(string $method, string $url, array $options = []): ResponseInterface
         {
             throw new \RuntimeException('Not implemented in mock');
@@ -106,15 +101,11 @@ function createMockResponse(): Response
                 }
             };
         }
-
-        // @phpstan-ignore-next-line
         public function withOptions(array $options): static
         {
             return $this;
         }
     };
-
-    // @phpstan-ignore-next-line
     $logger = new class implements LoggerInterface {
         public function emergency(\Stringable|string $message, array $context = []): void
         {
@@ -160,15 +151,15 @@ function createMockResponse(): Response
  * @internal
  */
 #[CoversClass(S3Client::class)]
-class S3ClientTest extends TestCase
+final class S3ClientTest extends TestCase
 {
-    private MockS3Client $asyncClient;
+    private AsyncS3Client $asyncClient;
 
     private S3Client $client;
 
     protected function setUp(): void
     {
-        $this->asyncClient = new MockS3Client();
+        $this->asyncClient = $this->createMock(AsyncS3Client::class);
         $this->client = new S3Client($this->asyncClient);
     }
 
@@ -210,9 +201,7 @@ class S3ClientTest extends TestCase
                 return ['custom' => 'value'];
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['headObject']['return'] = $result;
+        $this->asyncClient->method('headObject')->willReturn($result);
 
         // Act
         $response = $this->client->headObject($bucket, $key);
@@ -265,9 +254,7 @@ class S3ClientTest extends TestCase
                 return [];
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['headObject']['return'] = $result;
+        $this->asyncClient->method('headObject')->willReturn($result);
 
         // Act
         $response = $this->client->headObject($bucket, $key);
@@ -281,9 +268,7 @@ class S3ClientTest extends TestCase
         // Arrange
         $bucket = 'test-bucket';
         $key = 'test-file.txt';
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['headObject']['exception'] = new \RuntimeException('Access denied');
+        $this->asyncClient->method('headObject')->willThrowException(new \RuntimeException('Access denied'));
 
         // Act & Assert
         $this->expectException(S3Exception::class);
@@ -315,9 +300,7 @@ class S3ClientTest extends TestCase
                 return 'version-1';
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['putObject']['return'] = $result;
+        $this->asyncClient->method('putObject')->willReturn($result);
 
         // Act
         $response = $this->client->putObject($bucket, $key, $body);
@@ -357,9 +340,7 @@ class S3ClientTest extends TestCase
                 return 'version-1';
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['putObject']['return'] = $result;
+        $this->asyncClient->method('putObject')->willReturn($result);
 
         // Act
         $response = $this->client->putObject($bucket, $key, $body, $options);
@@ -378,9 +359,7 @@ class S3ClientTest extends TestCase
         $bucket = 'test-bucket';
         $key = 'test-file.txt';
         $body = 'test content';
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['putObject']['exception'] = new \RuntimeException('Upload failed');
+        $this->asyncClient->method('putObject')->willThrowException(new \RuntimeException('Upload failed'));
 
         // Act & Assert
         $this->expectException(S3Exception::class);
@@ -465,9 +444,7 @@ class S3ClientTest extends TestCase
                 return ['custom' => 'value'];
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['getObject']['return'] = $result;
+        $this->asyncClient->method('getObject')->willReturn($result);
 
         // Act
         $response = $this->client->getObject($bucket, $key);
@@ -489,9 +466,7 @@ class S3ClientTest extends TestCase
         // Arrange
         $bucket = 'test-bucket';
         $key = 'test-file.txt';
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['getObject']['exception'] = new \RuntimeException('File not found');
+        $this->asyncClient->method('getObject')->willThrowException(new \RuntimeException('File not found'));
 
         // Act & Assert
         $this->expectException(S3Exception::class);
@@ -522,9 +497,7 @@ class S3ClientTest extends TestCase
                 return 'version-1';
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['deleteObject']['return'] = $result;
+        $this->asyncClient->method('deleteObject')->willReturn($result);
 
         // Act
         $response = $this->client->deleteObject($bucket, $key);
@@ -542,9 +515,7 @@ class S3ClientTest extends TestCase
         // Arrange
         $bucket = 'test-bucket';
         $key = 'test-file.txt';
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['deleteObject']['exception'] = new \RuntimeException('Delete failed');
+        $this->asyncClient->method('deleteObject')->willThrowException(new \RuntimeException('Delete failed'));
 
         // Act & Assert
         $this->expectException(S3Exception::class);
@@ -605,9 +576,7 @@ class S3ClientTest extends TestCase
                 return $this->errors;
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['deleteObjects']['return'] = $result;
+        $this->asyncClient->method('deleteObjects')->willReturn($result);
 
         // Act
         $response = $this->client->deleteObjects($bucket, $objects);
@@ -649,9 +618,7 @@ class S3ClientTest extends TestCase
                 return [];
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['deleteObjects']['return'] = $result;
+        $this->asyncClient->method('deleteObjects')->willReturn($result);
 
         // Act
         $response = $this->client->deleteObjects($bucket, $objects);
@@ -666,9 +633,7 @@ class S3ClientTest extends TestCase
         // Arrange
         $bucket = 'test-bucket';
         $objects = [['Key' => 'file1.txt']];
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['deleteObjects']['exception'] = new \RuntimeException('Batch delete failed');
+        $this->asyncClient->method('deleteObjects')->willThrowException(new \RuntimeException('Batch delete failed'));
 
         // Act & Assert
         $this->expectException(S3Exception::class);
@@ -747,9 +712,7 @@ class S3ClientTest extends TestCase
                 return '';
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['listObjectsV2']['return'] = $result;
+        $this->asyncClient->method('listObjectsV2')->willReturn($result);
 
         // Act
         $response = $this->client->listObjects($bucket);
@@ -828,9 +791,7 @@ class S3ClientTest extends TestCase
                 return '/';
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['listObjectsV2']['return'] = $result;
+        $this->asyncClient->method('listObjectsV2')->willReturn($result);
 
         // Act
         $response = $this->client->listObjects($bucket, $options);
@@ -845,9 +806,7 @@ class S3ClientTest extends TestCase
     {
         // Arrange
         $bucket = 'test-bucket';
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['listObjectsV2']['exception'] = new \RuntimeException('List failed');
+        $this->asyncClient->method('listObjectsV2')->willThrowException(new \RuntimeException('List failed'));
 
         // Act & Assert
         $this->expectException(S3Exception::class);
@@ -889,9 +848,7 @@ class S3ClientTest extends TestCase
                 return 'version-1';
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['copyObject']['return'] = $result;
+        $this->asyncClient->method('copyObject')->willReturn($result);
 
         // Act
         $response = $this->client->copyObject($sourceBucket, $sourceKey, $destBucket, $destKey);
@@ -929,9 +886,7 @@ class S3ClientTest extends TestCase
                 return 'version-1';
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['copyObject']['return'] = $result;
+        $this->asyncClient->method('copyObject')->willReturn($result);
 
         // Act
         $response = $this->client->copyObject($sourceBucket, $sourceKey, $destBucket, $destKey);
@@ -982,9 +937,7 @@ class S3ClientTest extends TestCase
                 return null;
             }
         };
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['copyObject']['return'] = $result;
+        $this->asyncClient->method('copyObject')->willReturn($result);
 
         // Act
         $response = $this->client->copyObject($sourceBucket, $sourceKey, $destBucket, $destKey, $options);
@@ -1000,9 +953,7 @@ class S3ClientTest extends TestCase
         $sourceKey = 'source-file.txt';
         $destBucket = 'dest-bucket';
         $destKey = 'dest-file.txt';
-
-        // @phpstan-ignore-next-line
-        $this->asyncClient->expectations['copyObject']['exception'] = new \RuntimeException('Copy failed');
+        $this->asyncClient->method('copyObject')->willThrowException(new \RuntimeException('Copy failed'));
 
         // Act & Assert
         $this->expectException(S3Exception::class);

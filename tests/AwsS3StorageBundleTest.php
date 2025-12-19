@@ -14,6 +14,6 @@ use Tourze\PHPUnitSymfonyKernelTest\AbstractBundleTestCase;
  */
 #[CoversClass(AwsS3StorageBundle::class)]
 #[RunTestsInSeparateProcesses]
-class AwsS3StorageBundleTest extends AbstractBundleTestCase
+final class AwsS3StorageBundleTest extends AbstractBundleTestCase
 {
 }

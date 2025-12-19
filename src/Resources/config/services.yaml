@@ -4,19 +4,12 @@ services:
         autoconfigure: true
         public: false
 
-    # 明确定义每个服务，避免使用exclude
-    
-    # Adapter services
-    Tourze\AwsS3StorageBundle\Adapter\AwsS3Adapter: ~
-    Tourze\AwsS3StorageBundle\Adapter\PublicUrlGenerator: ~
-
-    # Client services
-    Tourze\AwsS3StorageBundle\Client\S3Client: ~
-
-    # Factory services
-    Tourze\AwsS3StorageBundle\Factory\S3AdapterFactory:
+    Tourze\AwsS3StorageBundle\Adapter\:
+        resource: '../../Adapter/'
+    Tourze\AwsS3StorageBundle\Client\:
+        resource: '../../Client/'
+    Tourze\AwsS3StorageBundle\Factory\:
+        resource: '../../Factory/'
         public: true
-    Tourze\AwsS3StorageBundle\Factory\FilesystemFactoryDecorator: ~
-
-    # DependencyInjection
-    Tourze\AwsS3StorageBundle\DependencyInjection\AwsS3StorageExtension: ~
+    Tourze\AwsS3StorageBundle\Helper\:
+        resource: '../../Helper/'
